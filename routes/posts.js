@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/auth');
-const upload = require('../middlewares/upload');
+const {upload,checkFileSize }= require('../middlewares/upload');
 const { createPost, getPost, listPosts, deletePost } = require('../controllers/postController');
 
 router.post('/', auth, upload.array('media', 10), createPost);

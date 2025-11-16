@@ -11,18 +11,16 @@ class Friendship extends Model {
       updated_at: { type: DataTypes.DATE },
       meta: { type: DataTypes.JSON }
     }, {
+      sequelize,          
+      modelName: 'Friendship',
+      tableName: 'friendships',
+      timestamps: false,
       indexes: [
         {
           unique: true,
           fields: ['user_id', 'friend_id']
         }
-      ],
-
-    }, {
-      sequelize,
-      modelName: 'Friendship',
-      tableName: 'friendships',
-      timestamps: false
+      ]
     });
   }
 }

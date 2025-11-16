@@ -20,8 +20,7 @@ const register = async (req, res) => {
       await Profile.create({ user_id: user.id, fullname });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
-    res.json({ token, user: { id: user.id, username: user.username, email: user.email } });
+    res.json({user: { id: user.id, username: user.username, email: user.email } });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
