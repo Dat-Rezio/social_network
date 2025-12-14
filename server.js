@@ -20,7 +20,10 @@ const notificationRoutes = require('./routes/notifications');
 const chatRoutes = require('./routes/chat');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
 app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -197,6 +200,7 @@ io.on('connection', (socket) => {
 // ---------------------------------------
 //  Khởi động server
 // ---------------------------------------
+
 const PORT = process.env.PORT || 3000;
 (async () => {
   try {
