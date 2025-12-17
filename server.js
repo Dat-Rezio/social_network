@@ -102,10 +102,13 @@ io.on('connection', (socket) => {
 
   // Join room
   socket.on("join_conversation", (conversationId) => {
+    console.log(`✋ User ${userId} joining conversation ${conversationId}`);
     socket.join("conv_" + conversationId);
+    console.log(`✅ User ${userId} joined room: conv_${conversationId}`);
   });
 
   socket.on("leave_conversation", (conversationId) => {
+    console.log(`👋 User ${userId} leaving conversation ${conversationId}`);
     socket.leave("conv_" + conversationId);
   });
 
@@ -121,6 +124,8 @@ io.on('connection', (socket) => {
   // Gửi tin nhắn
   socket.on("send_message", async ({ conversationId, content, type }) => {
     try {
+      console.log(`📤 User ${userId} sending message to conversation ${conversationId}: "${content}"`);
+      
       const message = await Message.create({
         conversation_id: conversationId,
         sender_id: userId,
@@ -129,8 +134,18 @@ io.on('connection', (socket) => {
         created_at: new Date(),
       });
 
+      console.log(`💾 Message saved with ID ${message.id}`);
+
+      // Update conversation updated_at to sort correctly
+      await Conversation.update(
+        { updated_at: new Date() },
+        { where: { id: conversationId } }
+      );
+
       // Gửi tới phòng
+      console.log(`📢 Broadcasting message to room: conv_${conversationId}`);
       io.to("conv_" + conversationId).emit("receive_message", message);
+      console.log(`✅ Message broadcast completed`);
 
       // Gửi "delivered" receipts
       const members = await ConversationMember.findAll({ where: { conversation_id: conversationId } });
@@ -162,7 +177,7 @@ io.on('connection', (socket) => {
       }
 
     } catch (err) {
-      console.log("Error sending message:", err);
+      console.error("❌ Error sending message:", err);
       socket.emit("error_message", { message: "Cannot send message" });
     }
   });
@@ -208,11 +223,32 @@ const PORT = process.env.PORT || 3000;
 (async () => {
   try {
     await sequelize.authenticate();
-    console.log('DB connected.');
-    await sequelize.sync({ alter: true });
+    console.log('✅ DB connected.');
 
-    server.listen(PORT, () => console.log(`Server running on ${PORT}`));
+    // Run migrations
+    console.log('Running migrations...');
+    try {
+      const QueryInterface = sequelize.getQueryInterface();
+      const { DataTypes } = require('sequelize');
+      
+      // Check if updated_at column exists in conversations table
+      const table = await QueryInterface.describeTable('conversations');
+      if (!table.updated_at) {
+        console.log('Adding updated_at column to conversations...');
+        await QueryInterface.addColumn('conversations', 'updated_at', {
+          type: DataTypes.DATE,
+          defaultValue: DataTypes.NOW,
+          allowNull: true
+        });
+        console.log('✅ Added updated_at column');
+      }
+    } catch (migrationErr) {
+      console.log('Migration note:', migrationErr.message);
+    }
+
+    server.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
   } catch (err) {
-    console.error('Unable to start server:', err);
+    console.error('❌ Unable to start server:', err);
+    process.exit(1);
   }
 })();

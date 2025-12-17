@@ -1,5 +1,5 @@
 
-const { Comment, Notification } = require('../models');
+const { Comment, Notification, User, Profile } = require('../models');
 
 const createComment = async (req, res) => {
   const userId = req.user.id;

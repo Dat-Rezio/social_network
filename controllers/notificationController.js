@@ -1,9 +1,25 @@
 
-const { Notification } = require('../models');
+const { Notification, User, Profile } = require('../models');
 
 const listNotifications = async (req, res) => {
   const userId = req.user.id;
-  const notifications = await Notification.findAll({ where: { receiver_id: userId }, order: [['created_at','DESC']] });
+  const notifications = await Notification.findAll({ 
+    where: { receiver_id: userId }, 
+    include: [
+      { 
+        model: User, 
+        as: 'sender', 
+        attributes: ['id'],
+        include: [
+          { 
+            model: Profile, 
+            attributes: ['fullname', 'avatar_url']
+          }
+        ]
+      }
+    ],
+    order: [['created_at','DESC']] 
+  });
   res.json({ notifications });
 };
 

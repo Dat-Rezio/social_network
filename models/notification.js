@@ -9,7 +9,8 @@ class Notification extends Model {
       type: { type: DataTypes.ENUM('like','comment','friend_request','message') },
       content: { type: DataTypes.TEXT },
       is_read: { type: DataTypes.BOOLEAN, defaultValue: false },
-      created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
+      created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+      metadata: { type: DataTypes.JSON }
     }, {
       sequelize,
       modelName: 'Notification',

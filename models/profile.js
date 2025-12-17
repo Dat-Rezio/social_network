@@ -9,6 +9,7 @@ class Profile extends Model {
       avatar_url: { type: DataTypes.STRING(255) },
       avatar_public_id: { type: DataTypes.STRING(255) },
       cover_url: { type: DataTypes.STRING(255) },
+      cover_public_id: { type: DataTypes.STRING(255) },
       birthday: { type: DataTypes.DATEONLY },
       gender: { type: DataTypes.ENUM('male','female','other') },
       updated_at: { type: DataTypes.DATE }

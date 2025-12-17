@@ -57,10 +57,22 @@ User.hasMany(Notification, { foreignKey: 'receiver_id', as: 'notifications' , on
 Notification.belongsTo(User, { foreignKey: 'receiver_id', as: 'receiver' });
 Notification.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });
 
-Conversation.hasMany(ConversationMember, { foreignKey: 'conversation_id' });
 // Chat associations
 Conversation.hasMany(ConversationMember, {
   foreignKey: 'conversation_id',
+  onDelete: 'CASCADE'
+});
+
+ConversationMember.belongsTo(Conversation, {
+  foreignKey: 'conversation_id'
+});
+
+ConversationMember.belongsTo(User, {
+  foreignKey: 'user_id'
+});
+
+User.hasMany(ConversationMember, {
+  foreignKey: 'user_id',
   onDelete: 'CASCADE'
 });
 
@@ -68,6 +80,7 @@ Conversation.hasMany(Message, {
   foreignKey: 'conversation_id',
   onDelete: 'CASCADE'
 });
+
 Message.belongsTo(Conversation, {
   foreignKey: 'conversation_id'
 });

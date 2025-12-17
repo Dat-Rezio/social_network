@@ -19,6 +19,12 @@ class Friendship extends Model {
         {
           unique: true,
           fields: ['user_id', 'friend_id']
+        },
+        {
+          fields: ['user_id', 'status']
+        },
+        {
+          fields: ['status']
         }
       ]
     });
